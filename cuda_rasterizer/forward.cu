@@ -303,6 +303,7 @@ renderCUDA(
 	uint32_t contributor = 0;
 	uint32_t last_contributor = 0;
 	float C[CHANNELS] = { 0 };
+	float weight = 0;
 	float D = 0;
 
 	// Iterate over batches until all done or range is complete
@@ -356,7 +357,8 @@ renderCUDA(
 			// Eq. (3) from 3D Gaussian splatting paper.
 			for (int ch = 0; ch < CHANNELS; ch++)
 				C[ch] += features[collected_id[j] * CHANNELS + ch] * alpha * T;
-				D += depths[collected_id[j]] * alpha * T;
+			weight += alpha * T;
+			D += depths[collected_id[j]] * alpha * T;
 
 			T = test_T;
 
@@ -373,7 +375,7 @@ renderCUDA(
 		n_contrib[pix_id] = last_contributor;
 		for (int ch = 0; ch < CHANNELS; ch++)
 			out_color[ch * H * W + pix_id] = C[ch] + T * bg_color[ch];
-		out_alpha[pix_id] = 1 - T;
+		out_alpha[pix_id] = weight; //1 - T;
 		out_depth[pix_id] = D;
 	}
 }

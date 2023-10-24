@@ -544,7 +544,7 @@ renderCUDA(
 
 			// Propagate gradients from pixel alpha (weights_sum) to opacity
 			accum_alpha_rec = last_alpha + (1.f - last_alpha) * accum_alpha_rec;
-			dL_dopa += - (alpha - accum_alpha_rec) * dL_dalpha;
+			dL_dopa += (1 - accum_alpha_rec) * dL_dalpha; //- (alpha - accum_alpha_rec) * dL_dalpha;
 
 			dL_dopa *= T;
 			// Update last alpha (to be used in the next iteration)
